@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,16 +14,13 @@ using System.Windows.Shapes;
 namespace SchoolMenuPlanner
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для CatalogPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CatalogPage : Page
     {
-        public MainWindow()
+        public CatalogPage()
         {
             InitializeComponent();
         }
-
-        public Frame MainFramePublic => MainFraime; // или сделать MainFraime публичным
-
     }
 }

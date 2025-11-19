@@ -22,5 +22,11 @@ namespace SchoolMenuPlanner
         {
             InitializeComponent();
         }
+
+        private void ComboBoxItemMenu_Selected(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = Window.GetWindow(this) as MainWindow;
+            mainWindow.MainFramePublic.Content = new CatalogPage();
+        }
     }
 }
