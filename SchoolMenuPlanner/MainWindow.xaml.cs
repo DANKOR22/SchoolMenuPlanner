@@ -19,6 +19,7 @@ namespace SchoolMenuPlanner
         public MainWindow()
         {
             InitializeComponent();
+            MainFramePublic.Content = new WeekPage();
         }
 
         public Frame MainFramePublic => MainFraime; // или сделать MainFraime публичным

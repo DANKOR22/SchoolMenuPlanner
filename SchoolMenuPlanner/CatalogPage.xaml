@@ -55,240 +55,109 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="🍎 Школьное меню" 
+                <TextBlock Grid.Column="0" Text="🍎 Каталог блюд" 
                    FontSize="30" FontWeight="Bold" Foreground="#2D3748" FontFamily="Comic Sans MS"/>
 
                 <ComboBox Grid.Column="2" Width="200" 
-                  SelectedIndex="1" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold" HorizontalAlignment="Left">
-                    <ComboBoxItem Content="Текущая неделя"/>
-                    <ComboBoxItem Content="Следующая неделя"/>
+                  SelectedIndex="0" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold" HorizontalAlignment="Left">
                     <ComboBoxItem Content="Архив меню"/>
+                    <ComboBoxItem Content="Следущая неделя"/>
+                    <ComboBoxItem Content="Текущая неделя"/>
                 </ComboBox>
             </Grid>
         </Border>
 
-        <!-- Основной контент -->
-        <TabControl Grid.Row="1" Margin="9" BorderThickness="0" Background="Transparent">
-            <TabControl.Resources>
-                <Style TargetType="TabControl">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="TabControl">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
+        <!-- Основной контент - без вкладок -->
+        <Border Grid.Row="1" Margin="20" Style="{StaticResource ModernCard}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                                    <!-- Центрированная панель вкладок -->
-                                    <Border Grid.Row="0" Background="Transparent" Padding="10">
-                                        <TabPanel x:Name="HeaderPanel" 
-                                           HorizontalAlignment="Center"
-                                           Background="Transparent"
-                                           IsItemsHost="True"/>
-                                    </Border>
+                <!-- Заголовки разделов -->
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                                    <!-- Контент вкладок -->
-                                    <Border Grid.Row="1" Background="{TemplateBinding Background}">
-                                        <ContentPresenter x:Name="PART_SelectedContentHost"
-                                                 ContentSource="SelectedContent"/>
-                                    </Border>
+                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                        <TextBlock Text="Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                        <TextBlock Text="Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                    </Border>
+                </Grid>
+
+                <!-- Списки блюд -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Завтрак -->
+                    <ListView Background="Transparent" Grid.Column="0" >
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="400">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="95*"/>
+                                        <ColumnDefinition Width="5*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Text="{Binding StringWithDish}" FontSize="20" FontFamily="Comic Sans MS"
+        TextAlignment="Center" Foreground="Black" Grid.Column="0"/>
+                                    <TextBlock Text="✕" FontSize="20" TextAlignment="Center" Grid.Column="1"/>
                                 </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
 
-                <Style TargetType="TabItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="TabItem">
-                                <Border Name="Border" Background="Transparent" 
-                                 BorderThickness="0" Padding="15,10"
-                                 Margin="2,0">
-                                    <ContentPresenter x:Name="ContentSite"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Center"
-                                 ContentSource="Header"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="White"/>
-                                        <Setter TargetName="Border" Property="BorderBrush" Value="#E1E8ED"/>
-                                        <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0"/>
-                                        <Setter TargetName="Border" Property="CornerRadius" Value="10,10,10,10"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TabControl.Resources>
+                        <ListView.ItemsSource>
+                            <CompositeCollection>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
+                                <local:ItemDish StringWithDish="Борщ"/>
 
-            <!-- Понедельник -->
-            <TabItem Header="Понедельник" FontFamily="Comic Sans MS" FontSize="18" >
-                <Border Style="{StaticResource ModernCard}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
+                            </CompositeCollection>
+                        </ListView.ItemsSource>
+                    </ListView>
 
-                        <!-- Заголовки -->
-                        <Grid Grid.Row="0" Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Style="{StaticResource MealSection}">
-                                <TextBlock Text="Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
-                            </Border>
-
-                            <Border Grid.Column="2" Style="{StaticResource MealSection}">
-                                <TextBlock Text="Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- Списки блюд -->
-                        <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Завтрак -->
-                            <StackPanel Grid.Column="0">
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Каша молочная рисовая" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Бутерброд с сыром" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Чай с сахаром" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Хлеб пшеничный" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Обед -->
-                            <StackPanel Grid.Column="2">
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Суп куриный с вермишелью" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Пюре картофельное с котлетой" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Салат из свежей капусты" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Компот из сухофруктов" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Хлеб ржаной" TextWrapping="Wrap" FontSize="20" FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
-                </Border>
-            </TabItem>
-
-            <!-- Вторник -->
-            <TabItem Header="Вторник" FontFamily="Comic Sans MS" FontSize="18">
-                <Border Style="{StaticResource ModernCard}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Заголовки -->
-                        <Grid Grid.Row="0" Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Style="{StaticResource MealSection}">
-                                <TextBlock Text="Завтрак" FontSize="25" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            </Border>
-
-                            <Border Grid.Column="2" Style="{StaticResource MealSection}">
-                                <TextBlock Text="Обед" FontSize="25" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- Списки блюд -->
-                        <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Завтрак -->
-                            <StackPanel Grid.Column="0">
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Омлет с зеленым горошком" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Какао с молоком" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Хлеб пшеничный" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Обед -->
-                            <StackPanel Grid.Column="2">
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Борщ со сметаной" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Гречневая каша с тефтелей" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Салат морковный" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource DishItem}">
-                                    <TextBlock Text="Кисель ягодный" TextWrapping="Wrap" FontSize="20" HorizontalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
-                </Border>
-            </TabItem>
-
-            <!-- Среда -->
-            <TabItem Header="Среда" FontFamily="Comic Sans MS" FontSize="20">
-                <!-- Аналогичная структура -->
-            </TabItem>
-
-            <!-- Четверг -->
-            <TabItem Header="Четверг" FontFamily="Comic Sans MS" FontSize="20">
-                <!-- Аналогичная структура -->
-            </TabItem>
-
-            <!-- Пятница -->
-            <TabItem Header="Пятница" FontFamily="Comic Sans MS" FontSize="20">
-                <!-- Аналогичная структура -->
-            </TabItem>
-
-        </TabControl>
+                    <!-- Обед -->
+                    <StackPanel Grid.Column="2">
+                        
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
 
         <!-- Статус бар -->
         <StatusBar Grid.Row="2" Background="#C177FF" BorderBrush="#E1E8ED" BorderThickness="1,0,0,0">
             <StatusBarItem>
-                <TextBlock Text="Готово к сохранению" Foreground="Green"/>
+                <TextBlock Text="Каталог блюд" Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock Text="Последнее изменение: сегодня 10:30" Foreground="Black"/>
+                <TextBlock Text="Всего блюд: 15" Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>
