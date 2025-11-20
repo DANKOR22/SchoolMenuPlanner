@@ -1,34 +1,42 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Models;
-using System.Windows;
 
 namespace SchoolMenuPlanner.Data
 {
-    public class MenuPlannerContext : DbContext
+    public class PlannerContext : DbContext
     {
         public DbSet<Dish> Dishes { get; set; }
+        public DbSet<CourseType> CourseTypes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = Application.Current.FindResource("ConnectionString") as string;
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = @"Data Source=DANKOR22;Initial Catalog=SchoolMenuPlanner;Integrated Security=True;TrustServerCertificate=True";
-            }
-
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer("Data Source=DANKOR22;Initial Catalog=SchoolMenuPlanner;Integrated Security=True;Trust Server Certificate=True");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Явно указываем имя таблицы и столбцов
-            modelBuilder.Entity<Dish>().ToTable("dishes");
-            modelBuilder.Entity<Dish>().HasKey(d => d.Id);
-            modelBuilder.Entity<Dish>().Property(d => d.Id).HasColumnName("id");
-            modelBuilder.Entity<Dish>().Property(d => d.Name).HasColumnName("name");
+            // Настройка таблицы Dish
+            modelBuilder.Entity<Dish>(entity =>
+            {
+                entity.ToTable("dishes");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.CourseTypeId).HasColumnName("course_type_id");
 
-            // УБЕРИТЕ все упоминания meal_type
+                entity.HasOne(d => d.CourseType)
+                    .WithMany(ct => ct.Dishes)
+                    .HasForeignKey(d => d.CourseTypeId);
+            });
+
+            // Настройка таблицы CourseType
+            modelBuilder.Entity<CourseType>(entity =>
+            {
+                entity.ToTable("course_types");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+            });
         }
     }
 }

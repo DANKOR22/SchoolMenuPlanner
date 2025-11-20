@@ -6,7 +6,9 @@
       xmlns:local="clr-namespace:SchoolMenuPlanner"
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="1000"
-      Title="CatalogPage">
+      Title="CatalogPage"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>
@@ -21,21 +23,13 @@
             </Setter>
         </Style>
 
-        <Style x:Key="MealSection" TargetType="Border">
-            <Setter Property="Background" Value="LightGray"/>
+        <Style x:Key="CategorySection" TargetType="Border">
+            <Setter Property="Background" Value="#D6BCFA"/>
             <Setter Property="BorderBrush" Value="#E2E8F0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-        </Style>
-
-        <Style x:Key="DishItem" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#EDF2F7"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Padding" Value="10"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
         </Style>
     </Page.Resources>
 
@@ -67,139 +61,476 @@
             </Grid>
         </Border>
 
-        <!-- Основной контент - без вкладок -->
+        <!-- Основной контент -->
         <Border Grid.Row="1" Margin="20" Style="{StaticResource ModernCard}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Заголовки разделов -->
-                <Grid Grid.Row="0" Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <!-- Заголовок -->
+                    <TextBlock Grid.Row="0" Text="Все категории блюд" 
+                               FontSize="24" FontWeight="Bold" 
+                               HorizontalAlignment="Center" 
+                               FontFamily="Comic Sans MS"
+                               Margin="0,0,0,20"/>
 
-                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
-                        <TextBlock Text="Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
-                    </Border>
+                    <!-- Списки блюд - 4 колонки -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
-                        <TextBlock Text="Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
-                    </Border>
+                        <!-- Колонка 1: Горячее блюдо и Горячее первое -->
+                        <StackPanel Grid.Column="0">
+                            <!-- Горячее блюдо -->
+                            <Border Style="{StaticResource CategorySection}">
+                                <TextBlock Text="🍳 Горячее блюдо" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="HotDishes"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="200"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="HotDishesListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+
+                            <!-- Горячее первое -->
+                            <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
+                                <TextBlock Text="🍲 Горячее первое" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="HotFirst"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="150"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="HotFirstListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                        </StackPanel>
+
+                        <!-- Колонка 2: Второе и Гарнир -->
+                        <StackPanel Grid.Column="2">
+                            <!-- Второе -->
+                            <Border Style="{StaticResource CategorySection}">
+                                <TextBlock Text="🍚 Второе" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="SecondDishes"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="200"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="SecondDishesListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+
+                            <!-- Гарнир -->
+                            <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
+                                <TextBlock Text="🍖 Гарнир" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="Garnish"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="150"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="GarnishListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                        </StackPanel>
+
+                        <!-- Колонка 3: Салат и Напиток -->
+                        <StackPanel Grid.Column="4">
+                            <!-- Салат -->
+                            <Border Style="{StaticResource CategorySection}">
+                                <TextBlock Text="🥗 Салат" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="Salads"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="200"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="SaladsListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+
+                            <!-- Напиток -->
+                            <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
+                                <TextBlock Text="🥤 Напиток" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="Drinks"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="150"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="DrinksListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                        </StackPanel>
+
+                        <!-- Колонка 4: Фрукты -->
+                        <StackPanel Grid.Column="6">
+                            <!-- Фрукты -->
+                            <Border Style="{StaticResource CategorySection}">
+                                <TextBlock Text="🍎 Фрукты" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                            </Border>
+
+                            <TextBlock Text="+" TextAlignment="Center" 
+                                       FontSize="25" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Stretch" 
+                                       Foreground="Green"
+                                       Cursor="Hand"
+                                       MouseDown="AddTextBox_Click"
+                                       Tag="Fruits"
+                                       Margin="0,5"
+                                       Background="White"
+                                       Padding="10"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          MaxHeight="200"
+                                          Padding="0">
+                                <ListView Background="Transparent" 
+                                          x:Name="FruitsListView"
+                                          BorderThickness="0"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="40"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
+                                                         FontSize="14" 
+                                                         FontFamily="Comic Sans MS"
+                                                         TextAlignment="Center" 
+                                                         Foreground="Black" 
+                                                         Grid.Column="0"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"
+                                                         Padding="6,3"
+                                                         LostFocus="TextBox_LostFocus"/>
+                                                <TextBlock Text="✕" 
+                                                           FontSize="14" 
+                                                           TextAlignment="Center" 
+                                                           Grid.Column="1"
+                                                           Cursor="Hand"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           MouseDown="RemoveItem_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
-
-                <!-- Списки блюд -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Завтрак -->
-                    <StackPanel Grid.Column="0" x:Name="BreakfastPanel">
-                        <TextBlock Text="+" TextAlignment="Center" 
-                   FontSize="30" 
-                   FontWeight="Bold" 
-                   HorizontalAlignment="Stretch" 
-                   Foreground="Green"
-                   Cursor="Hand"
-                   MouseDown="AddTextBox_Click"
-                   Tag="Breakfast"
-                   Margin="0,10"
-                                   Background="White"/>
-
-                        <ListView Background="Transparent" x:Name="BreakfastListView">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Width="400">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="95*"/>
-                                            <ColumnDefinition Width="5*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- В шаблоне ListView для TextBox -->
-                                        <TextBox Text="{Binding Name}" 
-         FontSize="20" 
-         FontFamily="Comic Sans MS"
-         TextAlignment="Center" 
-         Foreground="Black" 
-         Grid.Column="0"
-         LostFocus="TextBox_LostFocus"/>
-                                        <!-- Этот обработчик -->
-
-                                        <!-- В шаблоне ListView для кнопки удаления -->
-                                        <TextBlock Text="✕" 
-           FontSize="20" 
-           TextAlignment="Center" 
-           Grid.Column="1"
-           Cursor="Hand"
-           MouseDown="RemoveItem_Click"/>
-                                        <!-- Этот обработчик -->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </StackPanel>
-
-                    <!-- Обед -->
-                    <StackPanel Grid.Column="2" x:Name="LunchPanel">
-                        <TextBlock Text="+" Background="White" TextAlignment="Center" 
-                   FontSize="30" 
-                   FontWeight="Bold" 
-                   HorizontalAlignment="Stretch" 
-                   Foreground="Green"
-                   Cursor="Hand"
-                   MouseDown="AddTextBox_Click"
-                   Tag="Lunch"
-                   Margin="0,10"/>
-
-                        <ListView Background="Transparent" x:Name="LunchListView">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Width="400">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="95*"/>
-                                            <ColumnDefinition Width="5*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                            <TextBox Text="{Binding Name}" 
-                                             FontSize="20" 
-                                             FontFamily="Comic Sans MS"
-                                             TextAlignment="Center" 
-                                             Foreground="Black" 
-                                             Grid.Column="0"
-                                             LostFocus="TextBox_LostFocus"/>  
-                                        
-                                            <TextBlock Text="✕" 
-                                   FontSize="20" 
-                                   TextAlignment="Center" 
-                                   Grid.Column="1"
-                                   Cursor="Hand"
-                                   MouseDown="RemoveItem_Click"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </StackPanel>
-                </Grid>
-            </Grid>
+            </ScrollViewer>
         </Border>
 
         <!-- Статус бар -->
@@ -208,7 +539,7 @@
                 <TextBlock Text="Каталог блюд" Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock x:Name="TotalDihesText" Text="Всего блюд: " Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
+                <TextBlock x:Name="TotalDishesText" Text="Всего блюд: " Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>

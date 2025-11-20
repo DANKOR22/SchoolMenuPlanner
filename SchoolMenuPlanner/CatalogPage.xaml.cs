@@ -1,138 +1,197 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolMenuPlanner.Data;
-using SchoolMenuPlanner.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using SchoolMenuPlanner.Data;
+using SchoolMenuPlanner.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Windows.Navigation;
 
 namespace SchoolMenuPlanner
 {
     public partial class CatalogPage : Page
     {
-        public ObservableCollection<Dish> BreakfastItems { get; set; }
-        public ObservableCollection<Dish> LunchItems { get; set; }
-        private MenuPlannerContext _context;
+        // Коллекции для каждой категории согласно структуре БД
+        public ObservableCollection<Dish> HotDishesItems { get; set; }           // Горячее блюдо (course_type_id = 1)
+        public ObservableCollection<Dish> HotFirstItems { get; set; }            // Горячее первое (course_type_id = 2)
+        public ObservableCollection<Dish> SecondDishesItems { get; set; }        // Второе (course_type_id = 3)
+        public ObservableCollection<Dish> GarnishItems { get; set; }             // Гарнир (course_type_id = 4)
+        public ObservableCollection<Dish> SaladsItems { get; set; }              // Салат (course_type_id = 5)
+        public ObservableCollection<Dish> DrinksItems { get; set; }              // Напиток (course_type_id = 6)
+        public ObservableCollection<Dish> FruitsItems { get; set; }              // Фрукты (course_type_id = 7)
+
+        private PlannerContext _context;
 
         public CatalogPage()
         {
-            BreakfastItems = new ObservableCollection<Dish>();
-            LunchItems = new ObservableCollection<Dish>();
+            // Инициализация всех коллекций
+            HotDishesItems = new ObservableCollection<Dish>();
+            HotFirstItems = new ObservableCollection<Dish>();
+            SecondDishesItems = new ObservableCollection<Dish>();
+            GarnishItems = new ObservableCollection<Dish>();
+            SaladsItems = new ObservableCollection<Dish>();
+            DrinksItems = new ObservableCollection<Dish>();
+            FruitsItems = new ObservableCollection<Dish>();
 
             InitializeComponent();
+            this.DataContext = this;
 
-            _context = new MenuPlannerContext();
-            LoadDataFromDatabase();
+            _context = new PlannerContext();
+
+            // Загружаем данные при создании страницы
+            Loaded += (s, e) => LoadDataFromDatabase();
         }
 
         private void LoadDataFromDatabase()
         {
             try
             {
-                BreakfastItems.Clear();
-                LunchItems.Clear();
+                // Очищаем все коллекции
+                ClearAllCollections();
 
-                // Проверяем существование таблицы
-                if (!_context.Database.CanConnect())
+                // Загружаем блюда с типами из базы данных
+                var dishesWithTypes = _context.Dishes
+                    .Include(d => d.CourseType)
+                    .ToList();
+
+                // Отладочная информация
+                Console.WriteLine($"Загружено блюд: {dishesWithTypes.Count}");
+                foreach (var dish in dishesWithTypes)
                 {
-                    AddTestData();
-                    return;
+                    Console.WriteLine($"Блюдо: {dish.Name}, CourseTypeId: {dish.CourseTypeId}");
                 }
 
-                // Получаем все блюда из базы
-                var allDishes = _context.Dishes.ToList();
-
-                if (allDishes.Any())
+                // Распределяем блюда по категориям согласно course_type_id
+                foreach (var dish in dishesWithTypes)
                 {
-                    // Если есть данные в БД - используем их
-                    // Распределяем блюда между завтраком и обедом
-                    for (int i = 0; i < allDishes.Count; i++)
+                    switch (dish.CourseTypeId)
                     {
-                        if (i % 2 == 0)
-                            BreakfastItems.Add(allDishes[i]);
-                        else
-                            LunchItems.Add(allDishes[i]);
+                        case 1: HotDishesItems.Add(dish); break;      // Горячее блюдо
+                        case 2: HotFirstItems.Add(dish); break;       // Горячее первое
+                        case 3: SecondDishesItems.Add(dish); break;   // Второе
+                        case 4: GarnishItems.Add(dish); break;        // Гарнир
+                        case 5: SaladsItems.Add(dish); break;         // Салат
+                        case 6: DrinksItems.Add(dish); break;         // Напиток
+                        case 7: FruitsItems.Add(dish); break;         // Фрукты
                     }
                 }
-                else
-                {
-                    // Если таблица пустая - добавляем тестовые данные
-                    AddInitialDataToDatabase();
-                    LoadDataFromDatabase(); // Перезагружаем
-                    return;
-                }
 
-                BreakfastListView.ItemsSource = BreakfastItems;
-                LunchListView.ItemsSource = LunchItems;
+                // Отладочная информация о распределении
+                Console.WriteLine($"HotDishes: {HotDishesItems.Count}");
+                Console.WriteLine($"HotFirst: {HotFirstItems.Count}");
+                Console.WriteLine($"SecondDishes: {SecondDishesItems.Count}");
+                Console.WriteLine($"Garnish: {GarnishItems.Count}");
+                Console.WriteLine($"Salads: {SaladsItems.Count}");
+                Console.WriteLine($"Drinks: {DrinksItems.Count}");
+                Console.WriteLine($"Fruits: {FruitsItems.Count}");
+
+                // Привязываем данные к ListView
+                BindDataToViews();
+
                 UpdateTotalCount();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки: {ex.Message}");
-                AddTestData();
+                MessageBox.Show($"Ошибка загрузки данных из базы: {ex.Message}");
+                Console.WriteLine($"Ошибка: {ex.Message}");
             }
         }
 
-        private void AddInitialDataToDatabase()
+        private void ClearAllCollections()
         {
-            try
-            {
-                var initialDishes = new List<Dish>
-                {
-                    new Dish { Name = "Каша овсяная" },
-                    new Dish { Name = "Бутерброд с сыром" },
-                    new Dish { Name = "Чай" },
-                    new Dish { Name = "Борщ" },
-                    new Dish { Name = "Котлета куриная" },
-                    new Dish { Name = "Пюре картофельное" }
-                };
-
-                _context.Dishes.AddRange(initialDishes);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка добавления初始数据: {ex.Message}");
-            }
+            HotDishesItems.Clear();
+            HotFirstItems.Clear();
+            SecondDishesItems.Clear();
+            GarnishItems.Clear();
+            SaladsItems.Clear();
+            DrinksItems.Clear();
+            FruitsItems.Clear();
         }
 
-        private void AddTestData()
+        private void BindDataToViews()
         {
-            // Добавляем тестовые данные в память
-            BreakfastItems.Add(new Dish { Id = 1, Name = "Каша овсяная" });
-            BreakfastItems.Add(new Dish { Id = 2, Name = "Бутерброд с сыром" });
-            BreakfastItems.Add(new Dish { Id = 3, Name = "Чай" });
-
-            LunchItems.Add(new Dish { Id = 4, Name = "Борщ" });
-            LunchItems.Add(new Dish { Id = 5, Name = "Котлета куриная" });
-            LunchItems.Add(new Dish { Id = 6, Name = "Пюре картофельное" });
-
-            UpdateTotalCount();
+            HotDishesListView.ItemsSource = HotDishesItems;
+            HotFirstListView.ItemsSource = HotFirstItems;
+            SecondDishesListView.ItemsSource = SecondDishesItems;
+            GarnishListView.ItemsSource = GarnishItems;
+            SaladsListView.ItemsSource = SaladsItems;
+            DrinksListView.ItemsSource = DrinksItems;
+            FruitsListView.ItemsSource = FruitsItems;
         }
 
         private async void AddTextBox_Click(object sender, MouseButtonEventArgs e)
         {
-            if (sender is TextBlock textBlock && textBlock.Tag is string listType)
+            if (sender is TextBlock textBlock && textBlock.Tag is string categoryTag)
             {
-                var newDish = new Dish { Name = "Новое блюдо" };
-
                 try
                 {
+                    // Определяем course_type_id по тегу
+                    int courseTypeId = GetCourseTypeIdByTag(categoryTag);
+
+                    // Создаем новое блюдо
+                    var newDish = new Dish
+                    {
+                        Name = "Новое блюдо",
+                        CourseTypeId = courseTypeId
+                    };
+
+                    // Добавляем в базу данных
                     _context.Dishes.Add(newDish);
                     await _context.SaveChangesAsync();
 
-                    if (listType == "Breakfast")
-                        BreakfastItems.Add(newDish);
-                    else if (listType == "Lunch")
-                        LunchItems.Add(newDish);
+                    // Добавляем в соответствующую коллекцию
+                    AddDishToCollection(newDish, categoryTag);
 
                     UpdateTotalCount();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка добавления: {ex.Message}");
+                    MessageBox.Show($"Ошибка при добавлении блюда: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        private int GetCourseTypeIdByTag(string categoryTag)
+        {
+            return categoryTag switch
+            {
+                "HotDishes" => 1,      // Горячее блюдо
+                "HotFirst" => 2,       // Горячее первое
+                "SecondDishes" => 3,   // Второе
+                "Garnish" => 4,        // Гарнир
+                "Salads" => 5,         // Салат
+                "Drinks" => 6,         // Напиток
+                "Fruits" => 7,         // Фрукты
+                _ => 1
+            };
+        }
+
+        private void AddDishToCollection(Dish dish, string categoryTag)
+        {
+            switch (categoryTag)
+            {
+                case "HotDishes":
+                    HotDishesItems.Add(dish);
+                    break;
+                case "HotFirst":
+                    HotFirstItems.Add(dish);
+                    break;
+                case "SecondDishes":
+                    SecondDishesItems.Add(dish);
+                    break;
+                case "Garnish":
+                    GarnishItems.Add(dish);
+                    break;
+                case "Salads":
+                    SaladsItems.Add(dish);
+                    break;
+                case "Drinks":
+                    DrinksItems.Add(dish);
+                    break;
+                case "Fruits":
+                    FruitsItems.Add(dish);
+                    break;
             }
         }
 
@@ -142,19 +201,41 @@ namespace SchoolMenuPlanner
             {
                 try
                 {
-                    _context.Dishes.Remove(dish);
-                    await _context.SaveChangesAsync();
+                    // Подтверждение удаления
+                    var result = MessageBox.Show(
+                        $"Вы уверены, что хотите удалить блюдо \"{dish.Name}\"?",
+                        "Подтверждение удаления",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
 
-                    BreakfastItems.Remove(dish);
-                    LunchItems.Remove(dish);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        // Удаляем из базы данных
+                        _context.Dishes.Remove(dish);
+                        await _context.SaveChangesAsync();
 
-                    UpdateTotalCount();
+                        // Удаляем из всех коллекций
+                        RemoveDishFromAllCollections(dish);
+
+                        UpdateTotalCount();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка удаления: {ex.Message}");
+                    MessageBox.Show($"Ошибка при удалении блюда: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void RemoveDishFromAllCollections(Dish dish)
+        {
+            HotDishesItems.Remove(dish);
+            HotFirstItems.Remove(dish);
+            SecondDishesItems.Remove(dish);
+            GarnishItems.Remove(dish);
+            SaladsItems.Remove(dish);
+            DrinksItems.Remove(dish);
+            FruitsItems.Remove(dish);
         }
 
         private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
@@ -163,37 +244,51 @@ namespace SchoolMenuPlanner
             {
                 try
                 {
+                    // Сохраняем изменения в базе данных
                     dish.Name = textBox.Text;
                     _context.Dishes.Update(dish);
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка сохранения: {ex.Message}");
+                    MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void UpdateTotalCount()
         {
-            int totalCount = BreakfastItems.Count + LunchItems.Count;
-
-            foreach (var item in MainStatusBar.Items)  // ← Используем имя MainStatusBar
+            try
             {
-                if (item is StatusBarItem statusBarItem)
-                {
-                    if (statusBarItem.Content is TextBlock textBlock && textBlock.Text.StartsWith("Всего блюд:"))
-                    {
-                        textBlock.Text = $"Всего блюд: {totalCount}";
-                        break;
-                    }
-                }
+                int totalCount = HotDishesItems.Count + HotFirstItems.Count +
+                               SecondDishesItems.Count + GarnishItems.Count +
+                               SaladsItems.Count + DrinksItems.Count +
+                               FruitsItems.Count;
+
+                TotalDishesText.Text = $"Всего блюд: {totalCount}";
             }
+            catch (Exception ex)
+            {
+                // В случае ошибки просто показываем базовый текст
+                TotalDishesText.Text = "Всего блюд: 0";
+            }
+        }
+
+        // Обновление данных при загрузке страницы
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadDataFromDatabase();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             _context?.Dispose();
+        }
+
+        // Обработчик для обновления данных (можно вызвать извне)
+        public void RefreshData()
+        {
+            LoadDataFromDatabase();
         }
     }
 }
