@@ -128,18 +128,24 @@
                                             <ColumnDefinition Width="5*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBox Text="{Binding StringWithDish}" 
-                                 FontSize="20" 
-                                 FontFamily="Comic Sans MS"
-                                 TextAlignment="Center" 
-                                 Foreground="Black" 
-                                 Grid.Column="0"/>
+                                        <!-- В шаблоне ListView для TextBox -->
+                                        <TextBox Text="{Binding Name}" 
+         FontSize="20" 
+         FontFamily="Comic Sans MS"
+         TextAlignment="Center" 
+         Foreground="Black" 
+         Grid.Column="0"
+         LostFocus="TextBox_LostFocus"/>
+                                        <!-- Этот обработчик -->
+
+                                        <!-- В шаблоне ListView для кнопки удаления -->
                                         <TextBlock Text="✕" 
-                                   FontSize="20" 
-                                   TextAlignment="Center" 
-                                   Grid.Column="1"
-                                   Cursor="Hand"
-                                   MouseDown="RemoveItem_Click"/>
+           FontSize="20" 
+           TextAlignment="Center" 
+           Grid.Column="1"
+           Cursor="Hand"
+           MouseDown="RemoveItem_Click"/>
+                                        <!-- Этот обработчик -->
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -173,13 +179,15 @@
                                             <ColumnDefinition Width="5*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBox Text="{Binding StringWithDish}" 
-                                 FontSize="20" 
-                                 FontFamily="Comic Sans MS"
-                                 TextAlignment="Center" 
-                                 Foreground="Black" 
-                                 Grid.Column="0"/>
-                                        <TextBlock Text="✕" 
+                                            <TextBox Text="{Binding Name}" 
+                                             FontSize="20" 
+                                             FontFamily="Comic Sans MS"
+                                             TextAlignment="Center" 
+                                             Foreground="Black" 
+                                             Grid.Column="0"
+                                             LostFocus="TextBox_LostFocus"/>  
+                                        
+                                            <TextBlock Text="✕" 
                                    FontSize="20" 
                                    TextAlignment="Center" 
                                    Grid.Column="1"
