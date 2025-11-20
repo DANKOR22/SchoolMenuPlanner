@@ -4,8 +4,8 @@ using System.Text;
 
 namespace SchoolMenuPlanner
 {
-    class ItemDish
+    public class ItemDish
     {
-        public string StringWithDish { get; set; }
+        public string StringWithDish { get; set; } = string.Empty;
     }
 }

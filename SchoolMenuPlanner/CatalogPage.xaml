@@ -101,134 +101,106 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Завтрак -->
-                    <ListView Background="Transparent" Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                    <StackPanel Grid.Column="0" x:Name="BreakfastPanel">
+                        <TextBlock Text="+" TextAlignment="Center" 
+                   FontSize="30" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Stretch" 
+                   Foreground="Green"
+                   Cursor="Hand"
+                   MouseDown="AddTextBox_Click"
+                   Tag="Breakfast"
+                   Margin="0,10"
+                                   Background="White"/>
 
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0,0,0,8"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                        <ListView Background="Transparent" x:Name="BreakfastListView">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="95*"/>
-                                        <ColumnDefinition Width="5*"/>
-                                    </Grid.ColumnDefinitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="400">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="95*"/>
+                                            <ColumnDefinition Width="5*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <!-- Border для скругления фона -->
-                                    <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Grid.Column="0"/>
-
-                                    <!-- TextBox поверх Border -->
-                                    <TextBox Text="{Binding StringWithDish}" FontSize="20" FontFamily="Comic Sans MS"
-                         TextAlignment="Center" Foreground="Black" Grid.Column="0"
-                         Background="Transparent" BorderThickness="0" Padding="8,4" FontWeight="Bold"/>
-
-                                    <TextBlock Text="✕" FontSize="20" TextAlignment="Center" Grid.Column="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-
-                        <ListView.ItemsSource>
-                            <CompositeCollection>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="+"/>
-                            </CompositeCollection>
-                        </ListView.ItemsSource>
-                    </ListView>
+                                        <TextBox Text="{Binding StringWithDish}" 
+                                 FontSize="20" 
+                                 FontFamily="Comic Sans MS"
+                                 TextAlignment="Center" 
+                                 Foreground="Black" 
+                                 Grid.Column="0"/>
+                                        <TextBlock Text="✕" 
+                                   FontSize="20" 
+                                   TextAlignment="Center" 
+                                   Grid.Column="1"
+                                   Cursor="Hand"
+                                   MouseDown="RemoveItem_Click"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
 
                     <!-- Обед -->
-                    <ListView Background="Transparent" Grid.Column="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
+                    <StackPanel Grid.Column="2" x:Name="LunchPanel">
+                        <TextBlock Text="+" Background="White" TextAlignment="Center" 
+                   FontSize="30" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Stretch" 
+                   Foreground="Green"
+                   Cursor="Hand"
+                   MouseDown="AddTextBox_Click"
+                   Tag="Lunch"
+                   Margin="0,10"/>
 
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0,0,0,8"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                        <ListView Background="Transparent" x:Name="LunchListView">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="95*"/>
-                                        <ColumnDefinition Width="5*"/>
-                                    </Grid.ColumnDefinitions>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="400">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="95*"/>
+                                            <ColumnDefinition Width="5*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <!-- Border для скругления фона -->
-                                    <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Grid.Column="0"/>
-
-                                    <!-- TextBox поверх Border -->
-                                    <TextBox Text="{Binding StringWithDish}" FontSize="20" FontFamily="Comic Sans MS"
-     TextAlignment="Center" Foreground="Black" Grid.Column="0"
-     Background="Transparent" BorderThickness="0" Padding="8,4" FontWeight="Bold"/>
-
-                                    <TextBlock Text="✕" FontSize="20" TextAlignment="Center" Grid.Column="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-
-                        <ListView.ItemsSource>
-                            <CompositeCollection>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="Борщ"/>
-                                <local:ItemDish StringWithDish="+"/>
-                            </CompositeCollection>
-                        </ListView.ItemsSource>
-                    </ListView>
-
+                                        <TextBox Text="{Binding StringWithDish}" 
+                                 FontSize="20" 
+                                 FontFamily="Comic Sans MS"
+                                 TextAlignment="Center" 
+                                 Foreground="Black" 
+                                 Grid.Column="0"/>
+                                        <TextBlock Text="✕" 
+                                   FontSize="20" 
+                                   TextAlignment="Center" 
+                                   Grid.Column="1"
+                                   Cursor="Hand"
+                                   MouseDown="RemoveItem_Click"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
                 </Grid>
             </Grid>
         </Border>
 
         <!-- Статус бар -->
-        <StatusBar Grid.Row="2" Background="#C177FF" BorderBrush="#E1E8ED" BorderThickness="1,0,0,0">
+        <StatusBar x:Name="MainStatusBar" Grid.Row="2" Background="#C177FF" BorderBrush="#E1E8ED" BorderThickness="1,0,0,0">
             <StatusBarItem>
                 <TextBlock Text="Каталог блюд" Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock Text="Всего блюд: 15" Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
+                <TextBlock x:Name="TotalDihesText" Text="Всего блюд: " Foreground="Black" FontFamily="Comic Sans MS" FontSize="14"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>
