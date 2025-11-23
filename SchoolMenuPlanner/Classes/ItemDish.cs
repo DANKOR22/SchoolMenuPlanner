@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SchoolMenuPlanner.Models
+namespace SchoolMenuPlanner.Classes
 {
     public class Dish
     {

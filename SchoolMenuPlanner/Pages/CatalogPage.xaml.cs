@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolMenuPlanner.Classes;
+using SchoolMenuPlanner.Pages;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using SchoolMenuPlanner.Data;
-using SchoolMenuPlanner.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Windows.Navigation;
 
 namespace SchoolMenuPlanner
@@ -289,6 +289,25 @@ namespace SchoolMenuPlanner
         public void RefreshData()
         {
             LoadDataFromDatabase();
+        }
+
+        private void ComboBoxItemMenu_Selected(object sender, RoutedEventArgs e)
+        {
+            if (ComboBoxItemMenu.SelectedItem is ComboBoxItem selectedItem)
+            {
+                MainWindow mainWindow = Window.GetWindow(this) as MainWindow;
+                string pageType = selectedItem.Tag.ToString();
+
+                switch (pageType)
+                {
+                    case "WeekPage":
+                        mainWindow.MainFramePublic.Content = new WeekPage();
+                        break;
+                    case "NextWeekPage":
+                        mainWindow.MainFramePublic.Content = new NextWeekPage();
+                        break;
+                }
+            }
         }
     }
 }

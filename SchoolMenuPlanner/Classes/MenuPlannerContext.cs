@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Models;
 
-namespace SchoolMenuPlanner.Data
+namespace SchoolMenuPlanner.Classes
 {
     public class PlannerContext : DbContext
     {
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
+        public DbSet<DailyMenu> DailyMenus { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +37,24 @@ namespace SchoolMenuPlanner.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Name).HasColumnName("name");
+            });
+
+            // Настройка таблицы DailyMenu
+            modelBuilder.Entity<DailyMenu>(entity =>
+            {
+                entity.ToTable("daily_menus");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.DayOfWeek).HasColumnName("day_of_week");
+                entity.Property(e => e.MealType).HasColumnName("meal_type");
+                entity.Property(e => e.DishId).HasColumnName("dish_id");
+                entity.Property(e => e.CategoryType).HasColumnName("category_type");
+                entity.Property(e => e.WeekNumber).HasColumnName("week_number");
+                entity.Property(e => e.Year).HasColumnName("year");
+
+                entity.HasOne(d => d.Dish)
+                    .WithMany()
+                    .HasForeignKey(d => d.DishId);
             });
         }
     }

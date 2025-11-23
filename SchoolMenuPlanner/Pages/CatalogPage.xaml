@@ -31,6 +31,28 @@
             <Setter Property="Padding" Value="10"/>
             <Setter Property="Margin" Value="0,0,0,5"/>
         </Style>
+
+        <!-- Новый стиль для центрирования текста в TextBox -->
+        <Style x:Key="CenteredTextBox" TargetType="TextBox">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- Стиль для центрированных заголовков -->
+        <Style x:Key="CenteredHeader" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
     </Page.Resources>
 
     <Grid Background="#A436FF">
@@ -53,10 +75,11 @@
                    FontSize="30" FontWeight="Bold" Foreground="#2D3748" FontFamily="Comic Sans MS"/>
 
                 <ComboBox Grid.Column="2" Width="200" 
-                  SelectedIndex="0" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold" HorizontalAlignment="Left">
-                    <ComboBoxItem Content="Архив меню"/>
-                    <ComboBoxItem Content="Следущая неделя"/>
-                    <ComboBoxItem Content="Текущая неделя"/>
+                  SelectedIndex="0" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold" HorizontalAlignment="Left"
+                          x:Name="ComboBoxItemMenu" SelectionChanged="ComboBoxItemMenu_Selected">
+                    <ComboBoxItem Content="Архив меню" Tag="CatalogPage"/>
+                    <ComboBoxItem Content="Следущая неделя" Tag="NextWeekPage"/>
+                    <ComboBoxItem Content="Текущая неделя" Tag="WeekPage"/>
                 </ComboBox>
             </Grid>
         </Border>
@@ -90,10 +113,10 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Колонка 1: Горячее блюдо и Горячее первое -->
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
                             <!-- Горячее блюдо -->
                             <Border Style="{StaticResource CategorySection}">
-                                <TextBlock Text="🍳 Горячее блюдо" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🍳 Горячее блюдо" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -116,10 +139,11 @@
                                           x:Name="HotDishesListView"
                                           BorderThickness="0"
                                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                          HorizontalAlignment="Stretch">
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -130,14 +154,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -155,7 +172,7 @@
 
                             <!-- Горячее первое -->
                             <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
-                                <TextBlock Text="🍲 Горячее первое" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🍲 Горячее первое" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -177,10 +194,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="HotFirstListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -191,14 +210,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -216,10 +228,10 @@
                         </StackPanel>
 
                         <!-- Колонка 2: Второе и Гарнир -->
-                        <StackPanel Grid.Column="2">
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Stretch">
                             <!-- Второе -->
                             <Border Style="{StaticResource CategorySection}">
-                                <TextBlock Text="🍚 Второе" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🍚 Второе" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -241,10 +253,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="SecondDishesListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -255,14 +269,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -280,7 +287,7 @@
 
                             <!-- Гарнир -->
                             <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
-                                <TextBlock Text="🍖 Гарнир" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🍖 Гарнир" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -302,10 +309,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="GarnishListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -316,14 +325,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -341,10 +343,10 @@
                         </StackPanel>
 
                         <!-- Колонка 3: Салат и Напиток -->
-                        <StackPanel Grid.Column="4">
+                        <StackPanel Grid.Column="4" HorizontalAlignment="Stretch">
                             <!-- Салат -->
                             <Border Style="{StaticResource CategorySection}">
-                                <TextBlock Text="🥗 Салат" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🥗 Салат" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -366,10 +368,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="SaladsListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -380,14 +384,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -405,7 +402,7 @@
 
                             <!-- Напиток -->
                             <Border Style="{StaticResource CategorySection}" Margin="0,15,0,0">
-                                <TextBlock Text="🥤 Напиток" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🥤 Напиток" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -427,10 +424,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="DrinksListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -441,14 +440,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 
@@ -466,10 +458,10 @@
                         </StackPanel>
 
                         <!-- Колонка 4: Фрукты -->
-                        <StackPanel Grid.Column="6">
+                        <StackPanel Grid.Column="6" HorizontalAlignment="Stretch">
                             <!-- Фрукты -->
                             <Border Style="{StaticResource CategorySection}">
-                                <TextBlock Text="🍎 Фрукты" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="🍎 Фрукты" FontSize="16" Style="{StaticResource CenteredHeader}"/>
                             </Border>
 
                             <TextBlock Text="+" TextAlignment="Center" 
@@ -491,10 +483,12 @@
                                 <ListView Background="Transparent" 
                                           x:Name="FruitsListView"
                                           BorderThickness="0"
-                                          ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
                                         </ItemsPanelTemplate>
                                     </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
@@ -505,14 +499,7 @@
                                                     <ColumnDefinition Width="40"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" 
-                                                         FontSize="14" 
-                                                         FontFamily="Comic Sans MS"
-                                                         TextAlignment="Center" 
-                                                         Foreground="Black" 
-                                                         Grid.Column="0"
-                                                         HorizontalAlignment="Stretch"
-                                                         Margin="2"
-                                                         Padding="6,3"
+                                                         Style="{StaticResource CenteredTextBox}"
                                                          LostFocus="TextBox_LostFocus"/>
                                                 <TextBlock Text="✕" 
                                                            FontSize="14" 

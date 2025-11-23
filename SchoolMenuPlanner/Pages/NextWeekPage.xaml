@@ -1,12 +1,12 @@
-﻿<Page x:Class="SchoolMenuPlanner.WeekPage"
+﻿<Page x:Class="SchoolMenuPlanner.Pages.NextWeekPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:SchoolMenuPlanner"
+      xmlns:local="clr-namespace:SchoolMenuPlanner.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="700" d:Width="1000"
-      Title="WeekPage">
+      d:DesignHeight="700" d:DesignWidth="1000"
+      Title="NextWeekPage">
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>
@@ -59,10 +59,11 @@
                       FontSize="30" FontWeight="Bold" Foreground="#2D3748" FontFamily="Comic Sans MS"/>
 
                 <ComboBox Grid.Column="2" Width="200" 
-                     SelectedIndex="1" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold">
-                    <ComboBoxItem Content="Текущая неделя"/>
-                    <ComboBoxItem Content="Следующая неделя"/>
-                    <ComboBoxItem Content="Архив меню" Selected="ComboBoxItemMenu_Selected"/>
+                     SelectedIndex="1" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold"
+                          x:Name="ComboBoxItemMenu" SelectionChanged="ComboBoxItemMenu_Selected">
+                    <ComboBoxItem Content="Текущая неделя" Tag="WeekPage"/>
+                    <ComboBoxItem Content="Следующая неделя" Tag="NextWeekPage"/>
+                    <ComboBoxItem Content="Архив меню" Tag="CatalogPage"/>
                 </ComboBox>
             </Grid>
         </Border>
