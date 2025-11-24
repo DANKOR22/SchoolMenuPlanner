@@ -7,8 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="1000"
       Title="CatalogPage"
-      Loaded="Page_Loaded"
-      Unloaded="Page_Unloaded">
+      Loaded="Page_Loaded">
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>

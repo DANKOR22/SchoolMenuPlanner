@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Classes;
-using SchoolMenuPlanner.Pages;
+using SchoolMenuPlanner.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace SchoolMenuPlanner
@@ -13,15 +14,15 @@ namespace SchoolMenuPlanner
     public partial class CatalogPage : Page
     {
         // Коллекции для каждой категории согласно структуре БД
-        public ObservableCollection<Dish> HotDishesItems { get; set; }           // Горячее блюдо (course_type_id = 1)
-        public ObservableCollection<Dish> HotFirstItems { get; set; }            // Горячее первое (course_type_id = 2)
-        public ObservableCollection<Dish> SecondDishesItems { get; set; }        // Второе (course_type_id = 3)
-        public ObservableCollection<Dish> GarnishItems { get; set; }             // Гарнир (course_type_id = 4)
-        public ObservableCollection<Dish> SaladsItems { get; set; }              // Салат (course_type_id = 5)
-        public ObservableCollection<Dish> DrinksItems { get; set; }              // Напиток (course_type_id = 6)
-        public ObservableCollection<Dish> FruitsItems { get; set; }              // Фрукты (course_type_id = 7)
+        public ObservableCollection<Dish> HotDishesItems { get; set; }
+        public ObservableCollection<Dish> HotFirstItems { get; set; }
+        public ObservableCollection<Dish> SecondDishesItems { get; set; }
+        public ObservableCollection<Dish> GarnishItems { get; set; }
+        public ObservableCollection<Dish> SaladsItems { get; set; }
+        public ObservableCollection<Dish> DrinksItems { get; set; }
+        public ObservableCollection<Dish> FruitsItems { get; set; }
 
-        private PlannerContext _context;
+        private Dish? _newlyAddedDish;
 
         public CatalogPage()
         {
@@ -37,8 +38,6 @@ namespace SchoolMenuPlanner
             InitializeComponent();
             this.DataContext = this;
 
-            _context = new PlannerContext();
-
             // Загружаем данные при создании страницы
             Loaded += (s, e) => LoadDataFromDatabase();
         }
@@ -47,44 +46,30 @@ namespace SchoolMenuPlanner
         {
             try
             {
+                using var context = new PlannerContext();
+
                 // Очищаем все коллекции
                 ClearAllCollections();
 
                 // Загружаем блюда с типами из базы данных
-                var dishesWithTypes = _context.Dishes
+                var dishesWithTypes = context.Dishes
                     .Include(d => d.CourseType)
                     .ToList();
-
-                // Отладочная информация
-                Console.WriteLine($"Загружено блюд: {dishesWithTypes.Count}");
-                foreach (var dish in dishesWithTypes)
-                {
-                    Console.WriteLine($"Блюдо: {dish.Name}, CourseTypeId: {dish.CourseTypeId}");
-                }
 
                 // Распределяем блюда по категориям согласно course_type_id
                 foreach (var dish in dishesWithTypes)
                 {
                     switch (dish.CourseTypeId)
                     {
-                        case 1: HotDishesItems.Add(dish); break;      // Горячее блюдо
-                        case 2: HotFirstItems.Add(dish); break;       // Горячее первое
-                        case 3: SecondDishesItems.Add(dish); break;   // Второе
-                        case 4: GarnishItems.Add(dish); break;        // Гарнир
-                        case 5: SaladsItems.Add(dish); break;         // Салат
-                        case 6: DrinksItems.Add(dish); break;         // Напиток
-                        case 7: FruitsItems.Add(dish); break;         // Фрукты
+                        case 1: HotDishesItems.Add(dish); break;
+                        case 2: HotFirstItems.Add(dish); break;
+                        case 3: SecondDishesItems.Add(dish); break;
+                        case 4: GarnishItems.Add(dish); break;
+                        case 5: SaladsItems.Add(dish); break;
+                        case 6: DrinksItems.Add(dish); break;
+                        case 7: FruitsItems.Add(dish); break;
                     }
                 }
-
-                // Отладочная информация о распределении
-                Console.WriteLine($"HotDishes: {HotDishesItems.Count}");
-                Console.WriteLine($"HotFirst: {HotFirstItems.Count}");
-                Console.WriteLine($"SecondDishes: {SecondDishesItems.Count}");
-                Console.WriteLine($"Garnish: {GarnishItems.Count}");
-                Console.WriteLine($"Salads: {SaladsItems.Count}");
-                Console.WriteLine($"Drinks: {DrinksItems.Count}");
-                Console.WriteLine($"Fruits: {FruitsItems.Count}");
 
                 // Привязываем данные к ListView
                 BindDataToViews();
@@ -94,7 +79,6 @@ namespace SchoolMenuPlanner
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки данных из базы: {ex.Message}");
-                Console.WriteLine($"Ошибка: {ex.Message}");
             }
         }
 
@@ -136,14 +120,23 @@ namespace SchoolMenuPlanner
                         CourseTypeId = courseTypeId
                     };
 
-                    // Добавляем в базу данных
-                    _context.Dishes.Add(newDish);
-                    await _context.SaveChangesAsync();
+                    // Используем отдельный контекст для добавления
+                    using (var context = new PlannerContext())
+                    {
+                        context.Dishes.Add(newDish);
+                        await context.SaveChangesAsync();
+                    }
 
-                    // Добавляем в соответствующую коллекцию
-                    AddDishToCollection(newDish, categoryTag);
+                    // Добавляем в соответствующую коллекцию В НАЧАЛО (сверху)
+                    AddDishToCollectionAtTop(newDish, categoryTag);
+
+                    // Запоминаем только что добавленное блюдо
+                    _newlyAddedDish = newDish;
 
                     UpdateTotalCount();
+
+                    // Фокусируемся на новом TextBox
+                    FocusNewTextBox(newDish, categoryTag);
                 }
                 catch (Exception ex)
                 {
@@ -152,47 +145,160 @@ namespace SchoolMenuPlanner
             }
         }
 
-        private int GetCourseTypeIdByTag(string categoryTag)
-        {
-            return categoryTag switch
-            {
-                "HotDishes" => 1,      // Горячее блюдо
-                "HotFirst" => 2,       // Горячее первое
-                "SecondDishes" => 3,   // Второе
-                "Garnish" => 4,        // Гарнир
-                "Salads" => 5,         // Салат
-                "Drinks" => 6,         // Напиток
-                "Fruits" => 7,         // Фрукты
-                _ => 1
-            };
-        }
-
-        private void AddDishToCollection(Dish dish, string categoryTag)
+        private void AddDishToCollectionAtTop(Dish dish, string categoryTag)
         {
             switch (categoryTag)
             {
                 case "HotDishes":
-                    HotDishesItems.Add(dish);
+                    HotDishesItems.Insert(0, dish);
                     break;
                 case "HotFirst":
-                    HotFirstItems.Add(dish);
+                    HotFirstItems.Insert(0, dish);
                     break;
                 case "SecondDishes":
-                    SecondDishesItems.Add(dish);
+                    SecondDishesItems.Insert(0, dish);
                     break;
                 case "Garnish":
-                    GarnishItems.Add(dish);
+                    GarnishItems.Insert(0, dish);
                     break;
                 case "Salads":
-                    SaladsItems.Add(dish);
+                    SaladsItems.Insert(0, dish);
                     break;
                 case "Drinks":
-                    DrinksItems.Add(dish);
+                    DrinksItems.Insert(0, dish);
                     break;
                 case "Fruits":
+                    FruitsItems.Insert(0, dish);
+                    break;
+            }
+        }
+
+        private void FocusNewTextBox(Dish dish, string categoryTag)
+        {
+            // Находим соответствующий ListView
+            ListView? listView = GetListViewByCategory(categoryTag);
+            if (listView != null)
+            {
+                // Обновляем ItemsSource чтобы убедиться, что данные актуальны
+                listView.Items.Refresh();
+
+                // Находим TextBox для нового блюда
+                var itemContainer = listView.ItemContainerGenerator.ContainerFromItem(dish) as ListViewItem;
+                if (itemContainer != null)
+                {
+                    var textBox = FindVisualChild<TextBox>(itemContainer);
+                    if (textBox != null)
+                    {
+                        // Фокусируемся и выделяем весь текст
+                        textBox.Focus();
+                        textBox.SelectAll();
+
+                        // Подписываемся на событие KeyDown для обработки Enter
+                        textBox.KeyDown += NewTextBox_KeyDown;
+                    }
+                }
+            }
+        }
+
+        private ListView? GetListViewByCategory(string categoryTag)
+        {
+            return categoryTag switch
+            {
+                "HotDishes" => HotDishesListView,
+                "HotFirst" => HotFirstListView,
+                "SecondDishes" => SecondDishesListView,
+                "Garnish" => GarnishListView,
+                "Salads" => SaladsListView,
+                "Drinks" => DrinksListView,
+                "Fruits" => FruitsListView,
+                _ => null
+            };
+        }
+
+        private void NewTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && sender is TextBox textBox && textBox.DataContext is Dish dish)
+            {
+                // Если это только что добавленное блюдо, перемещаем его в конец
+                if (dish == _newlyAddedDish)
+                {
+                    MoveDishToBottom(dish);
+                    _newlyAddedDish = null;
+                }
+
+                // Снимаем фокус
+                Keyboard.ClearFocus();
+
+                // Отписываемся от события
+                textBox.KeyDown -= NewTextBox_KeyDown;
+            }
+        }
+
+        private void MoveDishToBottom(Dish dish)
+        {
+            // Удаляем блюдо из всех коллекций и добавляем в конец нужной
+            RemoveDishFromAllCollections(dish);
+
+            // Определяем категорию блюда и добавляем в конец соответствующей коллекции
+            switch (dish.CourseTypeId)
+            {
+                case 1:
+                    HotDishesItems.Add(dish);
+                    break;
+                case 2:
+                    HotFirstItems.Add(dish);
+                    break;
+                case 3:
+                    SecondDishesItems.Add(dish);
+                    break;
+                case 4:
+                    GarnishItems.Add(dish);
+                    break;
+                case 5:
+                    SaladsItems.Add(dish);
+                    break;
+                case 6:
+                    DrinksItems.Add(dish);
+                    break;
+                case 7:
                     FruitsItems.Add(dish);
                     break;
             }
+
+            // Обновляем привязки
+            BindDataToViews();
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T result)
+                    return result;
+                else
+                {
+                    var descendant = FindVisualChild<T>(child);
+                    if (descendant != null)
+                        return descendant;
+                }
+            }
+            return null;
+        }
+
+        private static int GetCourseTypeIdByTag(string categoryTag)
+        {
+            return categoryTag switch
+            {
+                "HotDishes" => 1,
+                "HotFirst" => 2,
+                "SecondDishes" => 3,
+                "Garnish" => 4,
+                "Salads" => 5,
+                "Drinks" => 6,
+                "Fruits" => 7,
+                _ => 1
+            };
         }
 
         private async void RemoveItem_Click(object sender, MouseButtonEventArgs e)
@@ -210,9 +316,17 @@ namespace SchoolMenuPlanner
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        // Удаляем из базы данных
-                        _context.Dishes.Remove(dish);
-                        await _context.SaveChangesAsync();
+                        // Используем отдельный контекст для удаления
+                        using (var context = new PlannerContext())
+                        {
+                            // Находим блюдо в базе по ID
+                            var dishToDelete = context.Dishes.Find(dish.Id);
+                            if (dishToDelete != null)
+                            {
+                                context.Dishes.Remove(dishToDelete);
+                                await context.SaveChangesAsync();
+                            }
+                        }
 
                         // Удаляем из всех коллекций
                         RemoveDishFromAllCollections(dish);
@@ -244,10 +358,22 @@ namespace SchoolMenuPlanner
             {
                 try
                 {
-                    // Сохраняем изменения в базе данных
-                    dish.Name = textBox.Text;
-                    _context.Dishes.Update(dish);
-                    await _context.SaveChangesAsync();
+                    // Используем отдельный контекст для обновления
+                    using (var context = new PlannerContext())
+                    {
+                        var dishToUpdate = context.Dishes.Find(dish.Id);
+                        if (dishToUpdate != null)
+                        {
+                            dishToUpdate.Name = textBox.Text.Trim();
+                            await context.SaveChangesAsync();
+
+                            // Обновляем объект в коллекции
+                            dish.Name = dishToUpdate.Name;
+                        }
+                    }
+
+                    // Отписываемся от события KeyDown если это было новое блюдо
+                    textBox.KeyDown -= NewTextBox_KeyDown;
                 }
                 catch (Exception ex)
                 {
@@ -267,9 +393,8 @@ namespace SchoolMenuPlanner
 
                 TotalDishesText.Text = $"Всего блюд: {totalCount}";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // В случае ошибки просто показываем базовый текст
                 TotalDishesText.Text = "Всего блюд: 0";
             }
         }
@@ -280,32 +405,28 @@ namespace SchoolMenuPlanner
             LoadDataFromDatabase();
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _context?.Dispose();
-        }
-
         // Обработчик для обновления данных (можно вызвать извне)
         public void RefreshData()
         {
             LoadDataFromDatabase();
         }
 
-        private void ComboBoxItemMenu_Selected(object sender, RoutedEventArgs e)
+        private void ComboBoxItemMenu_Selected(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboBoxItemMenu.SelectedItem is ComboBoxItem selectedItem)
+            if (ComboBoxItemMenu.SelectedItem is ComboBoxItem selectedItem && selectedItem.Tag is string pageType)
             {
-                MainWindow mainWindow = Window.GetWindow(this) as MainWindow;
-                string pageType = selectedItem.Tag.ToString();
-
-                switch (pageType)
+                var mainWindow = Window.GetWindow(this) as MainWindow;
+                if (mainWindow != null)
                 {
-                    case "WeekPage":
-                        mainWindow.MainFramePublic.Content = new WeekPage();
-                        break;
-                    case "NextWeekPage":
-                        mainWindow.MainFramePublic.Content = new NextWeekPage();
-                        break;
+                    switch (pageType)
+                    {
+                        case "WeekPage":
+                            mainWindow.MainFramePublic.Content = new WeekPage();
+                            break;
+                        case "NextWeekPage":
+                            mainWindow.MainFramePublic.Content = new NextWeekPage();
+                            break;
+                    }
                 }
             }
         }

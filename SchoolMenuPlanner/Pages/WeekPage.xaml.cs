@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Classes;
 using SchoolMenuPlanner.Models;
-using SchoolMenuPlanner.Pages;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -14,14 +13,14 @@ namespace SchoolMenuPlanner
 {
     public partial class WeekPage : Page
     {
-        // Коллекции для каждой категории блюд
-        public ObservableCollection<Dish> HotDishesItems { get; set; }
-        public ObservableCollection<Dish> HotFirstItems { get; set; }
-        public ObservableCollection<Dish> SecondDishesItems { get; set; }
-        public ObservableCollection<Dish> GarnishItems { get; set; }
-        public ObservableCollection<Dish> SaladsItems { get; set; }
-        public ObservableCollection<Dish> DrinksItems { get; set; }
-        public ObservableCollection<Dish> FruitsItems { get; set; }
+        // Коллекции для каждой категории блюд (используем общий сервис)
+        public ObservableCollection<Dish> HotDishesItems => MenuDataService.Instance.HotDishesItems;
+        public ObservableCollection<Dish> HotFirstItems => MenuDataService.Instance.HotFirstItems;
+        public ObservableCollection<Dish> SecondDishesItems => MenuDataService.Instance.SecondDishesItems;
+        public ObservableCollection<Dish> GarnishItems => MenuDataService.Instance.GarnishItems;
+        public ObservableCollection<Dish> SaladsItems => MenuDataService.Instance.SaladsItems;
+        public ObservableCollection<Dish> DrinksItems => MenuDataService.Instance.DrinksItems;
+        public ObservableCollection<Dish> FruitsItems => MenuDataService.Instance.FruitsItems;
 
         private PlannerContext _context;
         private int _currentWeekNumber;
@@ -29,15 +28,6 @@ namespace SchoolMenuPlanner
 
         public WeekPage()
         {
-            // Инициализация коллекций
-            HotDishesItems = new ObservableCollection<Dish>();
-            HotFirstItems = new ObservableCollection<Dish>();
-            SecondDishesItems = new ObservableCollection<Dish>();
-            GarnishItems = new ObservableCollection<Dish>();
-            SaladsItems = new ObservableCollection<Dish>();
-            DrinksItems = new ObservableCollection<Dish>();
-            FruitsItems = new ObservableCollection<Dish>();
-
             InitializeComponent();
             this.DataContext = this;
 
@@ -49,43 +39,10 @@ namespace SchoolMenuPlanner
             _currentYear = currentDate.Year;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadDataFromDatabase();
+            await MenuDataService.Instance.LoadDataAsync();
             LoadSavedMenu();
-        }
-
-        private void LoadDataFromDatabase()
-        {
-            try
-            {
-                // Загружаем блюда с типами из базы данных
-                var dishesWithTypes = _context.Dishes
-                    .Include(d => d.CourseType)
-                    .ToList();
-
-                // Очищаем коллекции
-                ClearAllCollections();
-
-                // Распределяем блюда по категориям
-                foreach (var dish in dishesWithTypes)
-                {
-                    switch (dish.CourseTypeId)
-                    {
-                        case 1: HotDishesItems.Add(dish); break;      // Горячее блюдо
-                        case 2: HotFirstItems.Add(dish); break;       // Горячее первое
-                        case 3: SecondDishesItems.Add(dish); break;   // Второе
-                        case 4: GarnishItems.Add(dish); break;        // Гарнир
-                        case 5: SaladsItems.Add(dish); break;         // Салат
-                        case 6: DrinksItems.Add(dish); break;         // Напиток
-                        case 7: FruitsItems.Add(dish); break;         // Фрукты
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки данных из базы: {ex.Message}");
-            }
         }
 
         private void LoadSavedMenu()
@@ -214,24 +171,13 @@ namespace SchoolMenuPlanner
         // Метод для получения номера недели по ISO 8601
         private int GetIso8601WeekOfYear(DateTime time)
         {
-            DayOfWeek day = CultureInfo.CurrentCulture.Calendar.GetDayOfWeek(time);
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
             if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
             {
                 time = time.AddDays(3);
             }
 
-            return CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-        }
-
-        private void ClearAllCollections()
-        {
-            HotDishesItems.Clear();
-            HotFirstItems.Clear();
-            SecondDishesItems.Clear();
-            GarnishItems.Clear();
-            SaladsItems.Clear();
-            DrinksItems.Clear();
-            FruitsItems.Clear();
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
         private void ComboBoxItemMenu_Selected(object sender, RoutedEventArgs e)
