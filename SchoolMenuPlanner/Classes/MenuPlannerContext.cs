@@ -8,6 +8,7 @@ namespace SchoolMenuPlanner.Classes
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<DailyMenu> DailyMenus { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -56,6 +57,7 @@ namespace SchoolMenuPlanner.Classes
                     .WithMany()
                     .HasForeignKey(d => d.DishId);
             });
+            
         }
     }
 }

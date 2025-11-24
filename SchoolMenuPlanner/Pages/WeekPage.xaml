@@ -8,6 +8,7 @@
       d:DesignHeight="700" d:Width="1000"
       Title="WeekPage"
       Loaded="Page_Loaded">
+
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>

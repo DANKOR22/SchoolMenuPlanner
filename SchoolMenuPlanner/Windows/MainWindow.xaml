@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1000">
 
-    <Frame x:Name="MainFraime" NavigationUIVisibility="Hidden"/>
+    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"
+           Source="WeekPage.xaml"/>
 
 </Window>

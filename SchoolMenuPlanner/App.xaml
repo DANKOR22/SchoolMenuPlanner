@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SchoolMenuPlanner"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             StartupUri="Windows/MainWindow.xaml">
+             StartupUri="Windows/AuthorizationWindow.xaml">
     <Application.Resources>
         <system:String x:Key="ConnectionString">
             Data Source=DANKOR22;Initial Catalog=SchoolMenuPlanner;Integrated Security=True;TrustServerCertificate=True
