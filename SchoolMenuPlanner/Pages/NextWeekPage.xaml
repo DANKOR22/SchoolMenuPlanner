@@ -11,7 +11,7 @@
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>
-            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderBrush" Value="#A436FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="20"/>
@@ -24,7 +24,7 @@
 
         <Style x:Key="MealSection" TargetType="Border">
             <Setter Property="Background" Value="#D6BCFA"/>
-            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#B255FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="15"/>

@@ -11,7 +11,7 @@
     <Page.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>
-            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderBrush" Value="#A436FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="20"/>
@@ -24,7 +24,7 @@
 
         <Style x:Key="CategorySection" TargetType="Border">
             <Setter Property="Background" Value="#D6BCFA"/>
-            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#B255FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Padding" Value="10"/>
@@ -62,7 +62,7 @@
         </Grid.RowDefinitions>
 
         <!-- Шапка -->
-        <Border Grid.Row="0" Background="#C177FF" Padding="20,15" BorderBrush="#E1E8ED" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="#C177FF" Padding="20,15" BorderBrush="#A436FF" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

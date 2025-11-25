@@ -14,20 +14,20 @@
     <Window.Resources>
         <Style x:Key="ModernCard" TargetType="Border">
             <Setter Property="Background" Value="#B255FF"/>
-            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderBrush" Value="#A436FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Padding" Value="30"/>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect ShadowDepth="2" Opacity="0.1" BlurRadius="8"/>
+                    <DropShadowEffect ShadowDepth="2" Opacity="0.5" BlurRadius="010"/>
                 </Setter.Value>
             </Setter>
         </Style>
 
         <Style x:Key="InputSection" TargetType="Border">
             <Setter Property="Background" Value="#D6BCFA"/>
-            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#B255FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="15"/>
@@ -41,19 +41,35 @@
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="#CBD5E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="0" 
+                            BlurRadius="20" 
+                            Color="White" 
+                            Opacity="0.5"/>
+            </Setter.Value>
+                </Setter>
         </Style>
 
         <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontFamily" Value="Comic Sans MS"/>
-            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Padding" Value="5"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="#CBD5E0"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="0" 
+                BlurRadius="20" 
+                Color="White" 
+                Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="LoginButtonStyle" TargetType="Button">
@@ -63,7 +79,7 @@
             <Setter Property="Background" Value="#4CAF50"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Padding" Value="10"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Style.Triggers>
@@ -82,6 +98,11 @@
                 VerticalAlignment="Center" 
                 HorizontalAlignment="Center"
                 Width="400" Height="450">
+            
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="35" Color="#A436FF" ShadowDepth="0"/>
+            </Border.Effect>
+            
             <StackPanel>
                 <!-- Заголовок -->
                 <Border Style="{StaticResource InputSection}">
@@ -91,6 +112,10 @@
                                Foreground="#2D3748" 
                                FontFamily="Comic Sans MS"
                                HorizontalAlignment="Center"/>
+
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Color="#B255FF" ShadowDepth="0"/>
+                    </Border.Effect>
                 </Border>
 
                 <!-- Подзаголовок -->
@@ -129,7 +154,8 @@
                                  Style="{StaticResource PasswordBoxStyle}"
                                  Height="45"
                                  GotFocus="PasswordBox_GotFocus"
-                                 LostFocus="PasswordBox_LostFocus"/>
+                                 LostFocus="PasswordBox_LostFocus"
+                                 />
                 </StackPanel>
 
                 <!-- Кнопка входа -->
@@ -137,7 +163,7 @@
                         Content="Войти" 
                         Style="{StaticResource LoginButtonStyle}"
                         Click="LoginButton_Click"
-                        Height="50"/>
+                        Height="50" />
 
                 <!-- Сообщение об ошибке -->
                 <TextBlock x:Name="ErrorTextBlock" 
