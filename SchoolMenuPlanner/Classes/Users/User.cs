@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿﻿using System.ComponentModel.DataAnnotations;
 
 namespace SchoolMenuPlanner.Classes
 {
@@ -22,5 +22,8 @@ namespace SchoolMenuPlanner.Classes
         [Required]
         [MaxLength(20)]
         public string role { get; set; } = string.Empty;
+
+        // Свойство для проверки является ли пользователь администратором
+        public bool IsAdmin => role?.ToLower() == "admin";
     }
 }

@@ -1,14 +1,10 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using SchoolMenuPlanner.Classes;
 using System.Windows;
 
 namespace SchoolMenuPlanner
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        public static User? CurrentUser { get; private set; }
     }
-
 }

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Classes;
 using SchoolMenuPlanner.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Navigation;
 
 namespace SchoolMenuPlanner
 {
@@ -23,6 +23,7 @@ namespace SchoolMenuPlanner
         public ObservableCollection<Dish> FruitsItems { get; set; }
 
         private Dish? _newlyAddedDish;
+        private User? _currentUser;
 
         public CatalogPage()
         {
@@ -38,8 +39,77 @@ namespace SchoolMenuPlanner
             InitializeComponent();
             this.DataContext = this;
 
+            // Получаем текущего пользователя из статического свойства MainWindow
+        _currentUser = MainWindow.CurrentUser;
+
             // Загружаем данные при создании страницы
             Loaded += (s, e) => LoadDataFromDatabase();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadDataFromDatabase();
+            ApplyUserRestrictions();
+        }
+
+        private void ApplyUserRestrictions()
+        {
+            // Если пользователь не админ, скрываем кнопки добавления и удаления
+            if (_currentUser?.IsAdmin == false)
+            {
+                HideAdminControls();
+            }
+        }
+
+        private void HideAdminControls()
+        {
+            // Скрываем все кнопки добавления (+)
+            var addButtons = FindVisualChildren<TextBlock>(this)
+                .Where(tb => tb.Text == "+" && tb.Tag != null);
+
+            foreach (var button in addButtons)
+            {
+                button.Visibility = Visibility.Collapsed;
+            }
+
+            // Скрываем все кнопки удаления (✕)
+            var removeButtons = FindVisualChildren<TextBlock>(this)
+                .Where(tb => tb.Text == "✕");
+
+            foreach (var button in removeButtons)
+            {
+                button.Visibility = Visibility.Collapsed;
+            }
+
+            // Делаем TextBox'ы только для чтения
+            var textBoxes = FindVisualChildren<TextBox>(this);
+            foreach (var textBox in textBoxes)
+            {
+                textBox.IsReadOnly = true;
+                textBox.IsHitTestVisible = false;
+                textBox.Focusable = false;
+                textBox.Background = Brushes.LightGray;
+            }
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject? depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T typedChild)
+                    {
+                        yield return typedChild;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
         }
 
         private void LoadDataFromDatabase()
@@ -76,7 +146,7 @@ namespace SchoolMenuPlanner
 
                 UpdateTotalCount();
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки данных из базы: {ex.Message}");
             }
@@ -106,6 +176,14 @@ namespace SchoolMenuPlanner
 
         private async void AddTextBox_Click(object sender, MouseButtonEventArgs e)
         {
+            // Если пользователь не админ, запрещаем добавление
+            if (_currentUser?.IsAdmin == false)
+            {
+                MessageBox.Show("У вас нет прав для добавления блюд.", "Доступ запрещен",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (sender is TextBlock textBlock && textBlock.Tag is string categoryTag)
             {
                 try
@@ -138,7 +216,7 @@ namespace SchoolMenuPlanner
                     // Фокусируемся на новом TextBox
                     FocusNewTextBox(newDish, categoryTag);
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show($"Ошибка при добавлении блюда: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -303,6 +381,14 @@ namespace SchoolMenuPlanner
 
         private async void RemoveItem_Click(object sender, MouseButtonEventArgs e)
         {
+            // Если пользователь не админ, запрещаем удаление
+            if (_currentUser?.IsAdmin == false)
+            {
+                MessageBox.Show("У вас нет прав для удаления блюд.", "Доступ запрещен",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (sender is TextBlock removeButton && removeButton.DataContext is Dish dish)
             {
                 try
@@ -334,7 +420,7 @@ namespace SchoolMenuPlanner
                         UpdateTotalCount();
                     }
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show($"Ошибка при удалении блюда: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -354,6 +440,12 @@ namespace SchoolMenuPlanner
 
         private async void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            // Если пользователь не админ, запрещаем редактирование
+            if (_currentUser?.IsAdmin == false)
+            {
+                return;
+            }
+
             if (sender is TextBox textBox && textBox.DataContext is Dish dish)
             {
                 try
@@ -375,7 +467,7 @@ namespace SchoolMenuPlanner
                     // Отписываемся от события KeyDown если это было новое блюдо
                     textBox.KeyDown -= NewTextBox_KeyDown;
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show($"Ошибка при сохранении изменений: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -393,16 +485,10 @@ namespace SchoolMenuPlanner
 
                 TotalDishesText.Text = $"Всего блюд: {totalCount}";
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 TotalDishesText.Text = "Всего блюд: 0";
             }
-        }
-
-        // Обновление данных при загрузке страницы
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadDataFromDatabase();
         }
 
         // Обработчик для обновления данных (можно вызвать извне)

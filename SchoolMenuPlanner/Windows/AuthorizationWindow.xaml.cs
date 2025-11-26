@@ -171,8 +171,11 @@ namespace SchoolMenuPlanner
 
         private void OpenMainWindow(User user)
         {
+            // Создаем MainWindow и передаем пользователя
             MainWindow mainWindow = new MainWindow(user);
+            Application.Current.MainWindow = mainWindow; // Устанавливаем как главное окно
             mainWindow.Show();
+            this.Close();
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)

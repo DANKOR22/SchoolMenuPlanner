@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMenuPlanner.Models;
+using System.Windows.Media;
 
 namespace SchoolMenuPlanner.Classes
 {

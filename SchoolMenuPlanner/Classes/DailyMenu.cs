@@ -1,5 +1,6 @@
 ﻿using SchoolMenuPlanner.Classes;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Media;
 
 namespace SchoolMenuPlanner.Models
 {

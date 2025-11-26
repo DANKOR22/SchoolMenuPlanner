@@ -70,11 +70,11 @@
                       FontSize="30" FontWeight="Bold" Foreground="#2D3748" FontFamily="Comic Sans MS"/>
 
                 <ComboBox Grid.Column="2" Width="200" 
-                     SelectedIndex="0" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold"
-                          x:Name="ComboBoxItemMenu" SelectionChanged="ComboBoxItemMenu_Selected">
+         SelectedIndex="1" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold"
+         x:Name="ComboBoxItemMenu" SelectionChanged="ComboBoxItemMenu_Selected">
                     <ComboBoxItem Content="Следующая неделя" Tag="NextWeekPage"/>
-                    <ComboBoxItem Content="Текущая неделя" Tag="WeekPage"/>
-                    <ComboBoxItem Content="Архив меню" Tag="CatalogPage"/>
+                    <ComboBoxItem Content="Текущая неделя" Tag="Weekpage"/>
+                    <ComboBoxItem Content="Архив меню" Tag="CatalogPage" x:Name="CatalogMenuItem"/>
                 </ComboBox>
             </Grid>
         </Border>

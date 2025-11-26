@@ -2,6 +2,7 @@
 using SchoolMenuPlanner.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace SchoolMenuPlanner.Pages
 {

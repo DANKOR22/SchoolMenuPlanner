@@ -10,10 +10,14 @@ namespace SchoolMenuPlanner
         private User _currentUser;
         public Frame MainFramePublic => MainFrame;
 
+        // Статическое свойство для глобального доступа к текущему пользователю
+        public static User? CurrentUser { get; private set; }
+
         public MainWindow(User user)
         {
             InitializeComponent();
             _currentUser = user;
+            CurrentUser = user; // Сохраняем в статическое свойство
             InitializeUserInterface();
         }
 
@@ -73,7 +77,7 @@ namespace SchoolMenuPlanner
         public void NavigateToCatalogPage()
         {
             var catalogPage = new CatalogPage();
-            MainFramePublic.Navigate(catalogPage);
+            MainFramePublic.Content = catalogPage;
         }
 
         public void NavigateToNextWeekPage()
