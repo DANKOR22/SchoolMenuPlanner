@@ -1,0 +1,751 @@
+﻿<Page x:Class="SchoolMenuPlanner.NextWeekPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SchoolMenuPlanner"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:Width="1000"
+      Title="NextWeekPage"
+      Loaded="Page_Loaded">
+    <Page.Resources>
+        <Style x:Key="ModernCard" TargetType="Border">
+            <Setter Property="Background" Value="#B255FF"/>
+            <Setter Property="BorderBrush" Value="#A436FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" Opacity="0.1" BlurRadius="8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MealSection" TargetType="Border">
+            <Setter Property="Background" Value="#D6BCFA"/>
+            <Setter Property="BorderBrush" Value="#B255FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style x:Key="CategorySection" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#EDF2F7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="#A436FF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Шапка -->
+        <Border Grid.Row="0" Background="#C177FF" Padding="20,15" BorderBrush="#E1E8ED" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="🍎 Школьное меню" 
+                      FontSize="30" FontWeight="Bold" Foreground="#2D3748" FontFamily="Comic Sans MS"/>
+
+                <ComboBox Grid.Column="2" Width="200" 
+         SelectedIndex="1" Padding="10" FontFamily="Comic Sans MS" FontSize="15" FontWeight="Bold"
+         x:Name="ComboBoxItemMenu" SelectionChanged="ComboBoxItemMenu_Selected">
+                    <ComboBoxItem Content="Следующая неделя" Tag="NextWeekPage"/>
+                    <ComboBoxItem Content="Текущая неделя" Tag="Weekpage"/>
+                    <ComboBoxItem Content="Архив меню" Tag="CatalogPage" x:Name="CatalogMenuItem"/>
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- Основной контент с ScrollViewer -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TabControl Margin="9" BorderThickness="0" Background="Transparent">
+                <TabControl.Resources>
+                    <Style TargetType="TabControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabControl">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Центрированная панель вкладок -->
+                                        <Border Grid.Row="0" Background="Transparent" Padding="10">
+                                            <TabPanel x:Name="HeaderPanel" 
+                                                  HorizontalAlignment="Center"
+                                                  Background="Transparent"
+                                                  IsItemsHost="True"/>
+                                        </Border>
+
+                                        <!-- Контент вкладок -->
+                                        <Border Grid.Row="1" Background="{TemplateBinding Background}">
+                                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                        ContentSource="SelectedContent"/>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border Name="Border" Background="Transparent" 
+                                        BorderThickness="0" Padding="15,10"
+                                        Margin="2,0">
+                                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="White"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#E1E8ED"/>
+                                            <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+
+                <!-- Понедельник -->
+                <TabItem Header="Понедельник" FontFamily="Comic Sans MS" FontSize="18">
+                    <Border Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовки -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍳 Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍽️ Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Списки блюд -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Завтрак -->
+                                    <StackPanel Grid.Column="0">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍚 Горячее блюдо" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayBreakfastHotDish" Style="{StaticResource ComboBoxStyle}" 
+                                                          ItemsSource="{Binding HotDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayBreakfastDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍎 Фрукты" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayBreakfastFruit" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding FruitsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Обед -->
+                                    <StackPanel Grid.Column="2">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍲 Горячее первое" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayLunchHotFirst" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotFirstItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍖 Второе" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayLunchSecond" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SecondDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Добавлен Гарнир -->
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥘 Гарнир" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayLunchGarnish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding GarnishItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥗 Салат" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayLunchSalad" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SaladsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="MondayLunchDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+
+                <!-- Вторник -->
+                <TabItem Header="Вторник" FontFamily="Comic Sans MS" FontSize="18">
+                    <Border Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовки -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍳 Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍽️ Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Списки блюд -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Завтрак -->
+                                    <StackPanel Grid.Column="0">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍚 Горячее блюдо" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayBreakfastHotDish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayBreakfastDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍎 Фрукты" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayBreakfastFruit" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding FruitsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Обед -->
+                                    <StackPanel Grid.Column="2">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍲 Горячее первое" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayLunchHotFirst" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotFirstItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍖 Второе" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayLunchSecond" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SecondDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Добавлен Гарнир -->
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥘 Гарнир" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayLunchGarnish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding GarnishItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥗 Салат" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayLunchSalad" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SaladsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="TuesdayLunchDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+
+                <!-- Среда -->
+                <TabItem Header="Среда" FontFamily="Comic Sans MS" FontSize="18">
+                    <Border Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовки -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍳 Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍽️ Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Списки блюд -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Завтрак -->
+                                    <StackPanel Grid.Column="0">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍚 Горячее блюдо" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayBreakfastHotDish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayBreakfastDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍎 Фрукты" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayBreakfastFruit" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding FruitsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Обед -->
+                                    <StackPanel Grid.Column="2">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍲 Горячее первое" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayLunchHotFirst" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotFirstItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍖 Второе" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayLunchSecond" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SecondDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Добавлен Гарнир -->
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥘 Гарнир" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayLunchGarnish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding GarnishItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥗 Салат" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayLunchSalad" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SaladsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="WednesdayLunchDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+
+                <!-- Четверг -->
+                <TabItem Header="Четверг" FontFamily="Comic Sans MS" FontSize="18">
+                    <Border Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовки -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍳 Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍽️ Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Списки блюд -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Завтрак -->
+                                    <StackPanel Grid.Column="0">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍚 Горячее блюдо" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayBreakfastHotDish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayBreakfastDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍎 Фрукты" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayBreakfastFruit" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding FruitsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Обед -->
+                                    <StackPanel Grid.Column="2">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍲 Горячее первое" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayLunchHotFirst" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotFirstItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍖 Второе" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayLunchSecond" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SecondDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Добавлен Гарнир -->
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥘 Гарнир" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayLunchGarnish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding GarnishItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥗 Салат" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayLunchSalad" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SaladsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="ThursdayLunchDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+
+                <!-- Пятница -->
+                <TabItem Header="Пятница" FontFamily="Comic Sans MS" FontSize="18">
+                    <Border Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Заголовки -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍳 Завтрак" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource MealSection}">
+                                        <TextBlock Text="🍽️ Обед" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Списки блюд -->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Завтрак -->
+                                    <StackPanel Grid.Column="0">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍚 Горячее блюдо" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayBreakfastHotDish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayBreakfastDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍎 Фрукты" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayBreakfastFruit" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding FruitsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Обед -->
+                                    <StackPanel Grid.Column="2">
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍲 Горячее первое" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayLunchHotFirst" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding HotFirstItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🍖 Второе" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayLunchSecond" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SecondDishesItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Добавлен Гарнир -->
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥘 Гарнир" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayLunchGarnish" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding GarnishItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥗 Салат" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayLunchSalad" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding SaladsItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Style="{StaticResource CategorySection}">
+                                            <StackPanel>
+                                                <TextBlock Text="🥤 Напиток" FontSize="18" FontWeight="Bold" FontFamily="Comic Sans MS" Margin="0,0,0,5"/>
+                                                <ComboBox x:Name="FridayLunchDrink" Style="{StaticResource ComboBoxStyle}"
+                                                          ItemsSource="{Binding DrinksItems}"
+                                                          DisplayMemberPath="Name"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+
+            </TabControl>
+        </ScrollViewer>
+
+        <!-- Статус бар -->
+        <StatusBar Grid.Row="2" Background="#C177FF" BorderBrush="#E1E8ED" BorderThickness="1,0,0,0">
+            <StatusBarItem>
+                <TextBlock Text="Готово к сохранению" Foreground="Green" FontFamily="Comic Sans MS" FontSize="14"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <Button Content="Сохранить меню" Click="SaveMenu_Click" 
+                        FontFamily="Comic Sans MS" FontSize="14" 
+                        Background="#4CAF50" Foreground="White" 
+                        Padding="10,5" Margin="5"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Page>
